@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Scara Control Panel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer_v1.2.6.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="toolbar">
+        <input type="file" id="fileInput" accept=".svg, .gcode, .nc, .txt, image/*">
+        <button id="btnGcode">GCODE</button>
+        <button id="btnReset">RESET POV</button>
+        <button id="btnToggleTravel">Tracé: OFF</button>
+        <button id="btnSimulator" onclick="window.location.href='simulator.html'">SIMULATOR</button>
+        
+        <div class="toolbar-separator"></div>
+        
+        <button id="btnConnect">CONNECTER</button>
+        <button id="btnZero">POSITION 0</button>
+        <button id="btnSend">IMPRIMER</button>
+        <button id="btnStop">STOP</button>
+        <button id="btnUnlock">UNLOCK</button>
+        <button id="btnResetGrbl">RESET</button>
+        <span id="serialStatus">Offline</span>
+    </div>
+    
+    <div class="main-container">
+        <div id="canvas-container"></div>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Serial Log</span>
+                <button id="btnClearLog" class="btn-small">CLEAR</button>
+            </div>
+            
+            <div class="config-panel">
+                <button id="btnConfSteps" class="btn-small btn-config-blue">STEP/RAD CALC</button>
+                <button id="btnConfSpeed" class="btn-small btn-config-blue">SLOW DOWN</button>
+                <button id="btnConfArms" class="btn-small btn-config-purple">SET ARMS</button>
+                <button id="btnStatus" class="btn-small btn-config-orange">$$ CONF</button>
+            </div>
+
+            <div id="serialLog">
+                > Console Ready...
+            </div>
+            <div class="console-container">
+                <input type="text" id="consoleInput" placeholder="commande ...">
+                <button id="btnConsoleSend">&gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Image to SVG Converter</h3>
+            <div id="previewContainer"></div>
+            <div class="modal-options">
+                <label>Seuil (0-1): <input type="number" id="modalThreshold" value="0.5" min="0" max="1" step="0.05" class="modal-threshold-input"></label>
+                <label class="modal-checkbox-label"><input type="checkbox" id="modalInvert"> Inverser couleurs</label>
+                <label class="modal-checkbox-label" title="Trace uniquement les contours"><input type="checkbox" id="modalEdge"> Mode Contours</label>
+            </div>
+            <div class="modal-options">
+                <label>Contraste: <input type="range" id="modalContrast" min="-1" max="1" value="0" step="0.05"></label>
+                <label>Lissage: <input type="range" id="modalSmooth" min="0" max="4" value="1" step="1"></label>
+                <label>Détail: <input type="range" id="modalDetail" min="1" max="5" value="3" step="1"></label>
+            </div>
+            <div class="modal-actions">
+                <button id="btnCancelModal">CANCEL</button>
+                <button id="btnConfirmModal">CONFIRMER</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="sketch.js"></script>
+    <script src="serial.js"></script>
+</body>
+</html>
