@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Scara GCode Simulator</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
-    <style>
-        .sim-controls { display: flex; gap: 20px; align-items: center; background: #34495e; padding: 10px; border-radius: 8px; margin: 10px 0; flex-wrap: wrap; justify-content: center; }
-        #speedSlider { width: 200px; }
-        #sim-canvas-container { width: calc(100vw - 32px); height: calc(100vh - 170px); border: 2px solid #1abc9c; border-radius: 8px; margin: 10px; display: flex; justify-content: center; }
-    </style>
 </head>
 <body>
     <div class="toolbar">
         <input type="file" id="gcodeInput" accept=".gcode, .nc, .txt">
-        <button id="btnBack" onclick="window.location.href='index.html'">RETOUR</button>
+        <button id="btnBack" class="btn-config-purple" onclick="window.location.href='index2.html'">RETOUR</button>
     </div>
     
     <div class="sim-controls">
@@ -22,9 +17,9 @@
         <input type="range" id="speedSlider" min="1" max="50" value="1">
         <label>Crayon: <span id="brushVal">2</span> px</label>
         <input type="range" id="brushSlider" min="1" max="20" value="2">
-        <button id="btnPlay">PLAY</button>
-        <button id="btnPause">PAUSE</button>
-        <button id="btnReset">RESET</button>
+        <button id="btnPlay" class="btn-config-green">PLAY</button>
+        <button id="btnPause" class="btn-config-orange">PAUSE</button>
+        <button id="btnReset" class="btn-config-red">RESET</button>
     </div>
 
     <div id="sim-canvas-container"></div>

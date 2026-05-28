@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCARA CONTROL PANEL</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer_v1.2.6.min.js"></script>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+    <div class = "toolbar">
+        <input type="file" id="fileInput" accept=".svg, .gcode, .nc, .txt, image/*">
+        <button id="btnGcode">GCODE</button>
+        <button id="btnReset" class="btn-config-red">RESET POV</button>
+        <button id="btnToggleTravel" class="btn-config-orange">Tracé: OFF</button>
+        <button id="btnSimulator" class="btn-config-purple" onclick="window.location.href='simulator.html'">SIMULATOR</button>
+    </div>
+
+    <div class="main-container">
+        <div id="canvas-container"></div>
+        <div class="serialMonitor">
+            <div class="serialMonitor-header">                
+                <span class="serial-title">Serial Log</span>
+                <button id="btnClearLog" class="btn-small btn-config-red">CLEAR</button>
+                <span id="serialStatus">Offline</span>
+            </div>
+            <div class="config-panel">
+                <button id="btnConnect" class="btn-small btn-config-green">CONNECTER</button>
+                <button id="btnZero" class="btn-small btn-config-red">POSITION 0</button>
+                <button id="btnSend" class="btn-small btn-config-green">IMPRIMER</button>
+                <button id="btnStop" class="btn-small btn-config-red">STOP</button>
+                <button id="btnUnlock" class="btn-small btn-config-purple">UNLOCK</button>
+                <button id="btnResetGrbl" class="btn-small btn-config-red">RESET</button>
+                <button id="btnConfSteps" class="btn-small">STEP/RAD CALC</button>
+                <button id="btnConfSpeed" class="btn-small">SLOW DOWN</button>
+                <button id="btnConfArms" class="btn-small">SET ARMS</button>
+                <button id="btnStatus" class="btn-small btn-config-orange">$$ CONF</button>
+            </div>
+            <div class="manual-control-panel" style="background: #1b242c; padding: 8px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #555;">
+                <button id="btnToggleManualMode" class="btn-small btn-config-orange">MODE MANUEL: OFF</button>
+                <span style="font-size: 0.75rem; color: #bbb; text-align: center;">Utilisez les flèches directionnelles quand activé</span>
+            </div>
+            <div id="serialLog">
+                > Console Ready...
+            </div>
+            <div class="console-container">
+                <input type="text" id="consoleInput" placeholder="commande ...">
+                <button id="btnConsoleSend">&gt;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Convertisseur d'image en SVG</h3>
+            <div id="previewContainer"></div>
+            <div class="modal-options">
+                <label>Seuil (0-1): <input type="number" id="modalThreshold" value="0.5" min="0" max="1" step="0.05" class="modal-threshold-input"></label>
+                <label class="modal-checkbox-label"><input type="checkbox" id="modalInvert"> Inverser couleurs</label>
+                <label class="modal-checkbox-label" title="Trace uniquement les contours"><input type="checkbox" id="modalEdge"> Mode Contours</label>
+            </div>
+            <div class="modal-options">
+                <label>Contraste: <input type="range" id="modalContrast" min="-1" max="1" value="0" step="0.05"></label>
+                <label>Lissage: <input type="range" id="modalSmooth" min="0" max="4" value="1" step="1"></label>
+                <label>Détail: <input type="range" id="modalDetail" min="1" max="5" value="3" step="1"></label>
+            </div>
+            <div class="modal-actions">
+                <button id="btnCancelModal" class="btn-config-red">CANCEL</button>
+                <button id="btnConfirmModal" class="btn-config-green">CONFIRMER</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="sketch.js"></script>
+    <script src="serial.js"></script>
+</body>
+</html>

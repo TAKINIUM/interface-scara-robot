@@ -13,6 +13,7 @@ let currentProcessedSVG = "";
 let tempImg = null;
 let loadedExternalGcode = null;
 let previewUpdateTimer = null;
+let manualModeActive = false;
 
 const TRACE_SETTINGS = {
   threshold: 0.5,
@@ -55,6 +56,41 @@ function bindUiEvents() {
     const eventName = el.type === "checkbox" ? "change" : "input";
     el.addEventListener(eventName, schedulePreviewUpdate);
   });
+
+  const btnToggleManualMode = document.getElementById("btnToggleManualMode");
+  if (btnToggleManualMode) {
+    btnToggleManualMode.addEventListener("click", () => {
+      manualModeActive = !manualModeActive;
+      btnToggleManualMode.innerText = "MODE MANUEL: " + (manualModeActive ? "ON" : "OFF");
+      btnToggleManualMode.style.background = manualModeActive ? "#2ecc71" : "#e67e22";
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (!manualModeActive || document.activeElement.tagName === "INPUT") return;
+      
+      const step = 5;
+      const feed = 6000;
+      
+      switch(e.key) {
+        case "ArrowUp":   
+          grbl.sendCommand(`$J=G91 Y${step} F${feed}\n`); 
+          e.preventDefault(); 
+          break;
+        case "ArrowDown": 
+          grbl.sendCommand(`$J=G91 Y-${step} F${feed}\n`); 
+          e.preventDefault(); 
+          break;
+        case "ArrowLeft": 
+          grbl.sendCommand(`$J=G91 X-${step} F${feed}\n`); 
+          e.preventDefault(); 
+          break;
+        case "ArrowRight":
+          grbl.sendCommand(`$J=G91 X${step} F${feed}\n`); 
+          e.preventDefault(); 
+          break;
+      }
+    });
+  }
 }
 
 function windowResized() {
