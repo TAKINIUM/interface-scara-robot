@@ -296,8 +296,8 @@ function setupConfigButtons() {
         const l1 = prompt("Longueur Bras 1 (mm):", "150");
         const l2 = prompt("Longueur Bras 2 (mm):", "150");
         if (!l1 || !l2) return;
-        grbl.sendCommand("$28=" + l1);
-        grbl.sendCommand("$29=" + l2);
+        grbl.sendCommand("$30=" + l1);
+        grbl.sendCommand("$32=" + l2);
         });
     }
 

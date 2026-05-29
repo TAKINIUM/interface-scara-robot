@@ -76,7 +76,7 @@ function bindUiEvents() {
     window.addEventListener("keydown", (e) => {
         if (!manualModeActive || document.activeElement.tagName === "INPUT") return
         const k = e.key.toLowerCase()
-        if (["z", "q", "s", "d"].includes(k)) {
+        if (["z", "q", "s", "d", "r", "f"].includes(k)) {
             keysPressed[k] = true
             e.preventDefault()
         }
@@ -85,7 +85,7 @@ function bindUiEvents() {
     window.addEventListener("keyup", (e) => {
         if (!manualModeActive) return
         const k = e.key.toLowerCase()
-        if (["z", "q", "s", "d"].includes(k)) {
+        if (["z", "q", "s", "d", "r", "f"].includes(k)) {
             delete keysPressed[k]
             e.preventDefault()
             if (Object.keys(keysPressed).length === 0) {
@@ -102,16 +102,29 @@ function startManualLoop() {
 
         let dx = 0
         let dy = 0
-        const step = 1.5
-        const feed = 6000
+        let dz = 0
+        const stepXY = 1.5
+        const stepZ = 0.5 // Plus petit pas pour ne pas dépasser les limites (soft limits) du servo
+        const feedXY = 6000
+        const feedZ = 1000 // Vitesse réduite pour Z pour éviter un blocage de commande
 
-        if (keysPressed["z"]) dy += step
-        if (keysPressed["s"]) dy -= step
-        if (keysPressed["q"]) dx -= step
-        if (keysPressed["d"]) dx += step
+        if (keysPressed["z"]) dy += stepXY
+        if (keysPressed["s"]) dy -= stepXY
+        if (keysPressed["q"]) dx -= stepXY
+        if (keysPressed["d"]) dx += stepXY
+        if (keysPressed["r"]) dz += stepZ
+        if (keysPressed["f"]) dz -= stepZ
 
-        if (dx !== 0 || dy !== 0) {
-            grbl.sendJog(`$J=G91 X${dx.toFixed(2)} Y${dy.toFixed(2)} F${feed}`)
+        if (dx !== 0 || dy !== 0 || dz !== 0) {
+            const parts = []
+            if (dx !== 0) parts.push(`X${dx.toFixed(2)}`)
+            if (dy !== 0) parts.push(`Y${dy.toFixed(2)}`)
+            if (dz !== 0) parts.push(`Z${dz.toFixed(2)}`)
+            
+            // Si seul le Z bouge, on s'assure d'utiliser son Feedrate, sinon on maintient le feed XY
+            const feed = (dx === 0 && dy === 0) ? feedZ : feedXY
+            const cmd = `$J=G91 ${parts.join(" ")} F${feed}`
+            grbl.sendJog(cmd)
         }
     }, 30)
 }
