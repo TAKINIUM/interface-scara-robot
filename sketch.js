@@ -1,7 +1,10 @@
 const PAPER_W = 200
 const PAPER_H = 200 
-const PEN_UP = "M03 S0\n"   
-const PEN_DOWN = "M03 S20\n"  
+
+// Commandes de mouvement réelles pour l'axe Z natif
+const PEN_UP = "G0 Z0\n"   
+const PEN_DOWN = "G0 Z-10\n"  
+
 const FEED_MOVE = "5000"    
 const FEED_RAPID = "10000"  
 
@@ -103,15 +106,17 @@ function startManualLoop() {
         let dx = 0
         let dy = 0
         let dz = 0
-        const stepXY = 1.0 // Légèrement réduit pour garder un meilleur contrôle en SCARA
-        const stepZ = 0.5
-        const feedXY = 6000 // F6000 est bien en dessous des 10000 max de ton YAML
-        const feedZ = 800   // F800 respecte la limite max_rate de 1000 pour ton axe Z servo
+        const stepXY = 1.5
+        const stepZ = 10
+        const feedXY = 6000
+        const feedZ = 5000
 
         if (keysPressed["z"]) dy += stepXY
         if (keysPressed["s"]) dy -= stepXY
         if (keysPressed["q"]) dx -= stepXY
         if (keysPressed["d"]) dx += stepXY
+        
+        // Contrôle manuel de l'axe Z natif (R pour monter, F pour descendre)
         if (keysPressed["r"]) dz += stepZ
         if (keysPressed["f"]) dz -= stepZ
 
@@ -122,7 +127,7 @@ function startManualLoop() {
             if (dz !== 0) parts.push(`Z${dz.toFixed(2)}`)
             
             const feed = (dx === 0 && dy === 0) ? feedZ : feedXY
-            const cmd = `$J=G91 ${parts.join(" ")} F${feed}`
+            const cmd = `G91 ${parts.join(" ")} F${feed}`
             grbl.sendJog(cmd)
         }
     }, 30)
@@ -376,9 +381,9 @@ function parseGcode(gcodeStr) {
         const c = line.trim().toUpperCase()
         if (!c || c.startsWith(";")) return
 
-        // Interprétation modifiée pour lire les mouvements de l'axe Z
-        if (c.includes("Z0")) isPenDown = true
-        if (c.includes("Z5") || /Z[1-9]/.test(c)) isPenDown = false
+        // Lecture de l'axe Z pour l'affichage visuel de l'aperçu
+        if (c.includes("Z-10")) isPenDown = true
+        if (c.includes("Z0") || /Z[1-9]/.test(c)) isPenDown = false
 
         if (!c.startsWith("G0") && !c.startsWith("G1")) return
 
