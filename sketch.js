@@ -1,9 +1,9 @@
-const PAPER_W = 297
-const PAPER_H = 210
-const PEN_UP = "M03 S0\n"
-const PEN_DOWN = "M03 S20\n"
-const FEED_MOVE = "5000"
-const FEED_RAPID = "10000"
+const PAPER_W = 200
+const PAPER_H = 200 
+const PEN_UP = "M03 S0\n"   
+const PEN_DOWN = "M03 S20\n"  
+const FEED_MOVE = "5000"    
+const FEED_RAPID = "10000"  
 
 let pointPaths = []
 let viewScale = 2
@@ -103,10 +103,10 @@ function startManualLoop() {
         let dx = 0
         let dy = 0
         let dz = 0
-        const stepXY = 1.5
-        const stepZ = 0.5 // Plus petit pas pour ne pas dépasser les limites (soft limits) du servo
-        const feedXY = 6000
-        const feedZ = 1000 // Vitesse réduite pour Z pour éviter un blocage de commande
+        const stepXY = 1.0 // Légèrement réduit pour garder un meilleur contrôle en SCARA
+        const stepZ = 0.5
+        const feedXY = 6000 // F6000 est bien en dessous des 10000 max de ton YAML
+        const feedZ = 800   // F800 respecte la limite max_rate de 1000 pour ton axe Z servo
 
         if (keysPressed["z"]) dy += stepXY
         if (keysPressed["s"]) dy -= stepXY
@@ -121,7 +121,6 @@ function startManualLoop() {
             if (dy !== 0) parts.push(`Y${dy.toFixed(2)}`)
             if (dz !== 0) parts.push(`Z${dz.toFixed(2)}`)
             
-            // Si seul le Z bouge, on s'assure d'utiliser son Feedrate, sinon on maintient le feed XY
             const feed = (dx === 0 && dy === 0) ? feedZ : feedXY
             const cmd = `$J=G91 ${parts.join(" ")} F${feed}`
             grbl.sendJog(cmd)
@@ -377,8 +376,9 @@ function parseGcode(gcodeStr) {
         const c = line.trim().toUpperCase()
         if (!c || c.startsWith(";")) return
 
-        if (c.includes("M03 S20")) isPenDown = true
-        if (c.includes("M03 S0")) isPenDown = false
+        // Interprétation modifiée pour lire les mouvements de l'axe Z
+        if (c.includes("Z0")) isPenDown = true
+        if (c.includes("Z5") || /Z[1-9]/.test(c)) isPenDown = false
 
         if (!c.startsWith("G0") && !c.startsWith("G1")) return
 
