@@ -1,7 +1,6 @@
 const PAPER_W = 200
 const PAPER_H = 200 
 
-// Commandes de mouvement réelles pour l'axe Z natif
 const PEN_UP = "G0 Z0\n"   
 const PEN_DOWN = "G0 Z-10\n"  
 
@@ -107,7 +106,7 @@ function startManualLoop() {
         let dy = 0
         let dz = 0
         const stepXY = 1.5
-        const stepZ = 10
+        const stepZ = 5
         const feedXY = 6000
         const feedZ = 5000
 
@@ -115,8 +114,6 @@ function startManualLoop() {
         if (keysPressed["s"]) dy -= stepXY
         if (keysPressed["q"]) dx -= stepXY
         if (keysPressed["d"]) dx += stepXY
-        
-        // Contrôle manuel de l'axe Z natif (R pour monter, F pour descendre)
         if (keysPressed["r"]) dz += stepZ
         if (keysPressed["f"]) dz -= stepZ
 
